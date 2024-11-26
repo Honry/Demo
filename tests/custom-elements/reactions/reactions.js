@@ -359,3 +359,105 @@ function test_mutating_style_property_priority(testFunction, name) {
         assert_array_equals(element.takeLog().types(), []);
     }, name + ' must enqueue an attributeChanged reaction when it makes a property important but the style attribute is not observed');
 }
+
+function testReflectAttributeWithContentValuesNew(jsAttributeName, contentAttributeName, validValue1, validValue2,  name) {
+    test(function () {
+        let element = define_new_custom_element([contentAttributeName]);
+        let instance = document.createElement(element.name);
+        assert_array_equals(element.takeLog().types(), ['constructed']);
+        instance.setAttribute(jsAttributeName,validValue1);
+        //instance[jsAttributeName] = validValue1;
+        let logEntries = element.takeLog();
+        //alert(logEntries.types());
+        assert_array_equals(logEntries.types(), ['attributeChanged']);
+        assert_attribute_log_entry(logEntries.last(), {name: contentAttributeName, oldValue: null, newValue: validValue1, namespace: null});
+    }, name + ' must enqueue an attributeChanged reaction when adding ' + contentAttributeName + ' content attribute');
+
+    test(function () {
+        let element = define_new_custom_element([contentAttributeName]);
+        let instance = document.createElement(element.name);
+        instance.setAttribute(jsAttributeName,validValue1);
+        //instance[jsAttributeName] = validValue1;
+        assert_array_equals(element.takeLog().types(), ['constructed', 'attributeChanged']);
+        instance.setAttribute(jsAttributeName,validValue2);
+        //instance[jsAttributeName] = validValue2;
+        let logEntries = element.takeLog();
+        assert_array_equals(logEntries.types(), ['attributeChanged']);
+        assert_attribute_log_entry(logEntries.last(), {name: contentAttributeName, oldValue: validValue1, newValue: validValue2, namespace: null});
+    }, name + ' must enqueue an attributeChanged reaction when replacing an existing attribute');
+}
+
+function testReflectAttributeWithContentValuesArea(jsAttributeName, contentAttributeName, validValue1, validValue2, name) {
+    let container = document.createElement('map');
+    document.body.appendChild(container);
+
+    test(function () {
+        let element = define_new_custom_element([contentAttributeName]);
+        let instance = document.createElement(element.name);
+        assert_array_equals(element.takeLog().types(),['constructed']);
+        container.appendChild(instance);
+        assert_array_equals(element.takeLog().types(), ['connected']); 
+    }, name + ' must enqueue a connected reaction');
+    
+    test(function () {
+        let element = define_new_custom_element([contentAttributeName]);
+        let instance = document.createElement(element.name);
+        assert_array_equals(element.takeLog().types(),['constructed']);
+        container.appendChild(instance);
+        assert_array_equals(element.takeLog().types(), ['connected']);
+        instance.setAttribute(jsAttributeName,validValue1);
+        //instance[jsAttributeName] = validValue1;
+        let logEntries = element.takeLog();
+        assert_array_equals(logEntries.types(), ['attributeChanged']);
+        assert_attribute_log_entry(logEntries.last(), {name: contentAttributeName, oldValue: null, newValue: validValue1, namespace: null});
+    }, name + ' must enqueue an attributeChanged reaction when adding ' + contentAttributeName + ' content attribute');
+    
+    test(function () {
+        let element = define_new_custom_element([contentAttributeName]);
+        let instance = document.createElement(element.name);
+        container.appendChild(instance);
+        instance.setAttribute(jsAttributeName,validValue1);
+        //instance[jsAttributeName] = validValue1;
+        assert_array_equals(element.takeLog().types(), ['constructed', 'connected', 'attributeChanged']);
+        instance.setAttribute(jsAttributeName,validValue2);
+        //instance[jsAttributeName] = validValue2;
+        let logEntries = element.takeLog();
+        assert_array_equals(logEntries.types(), ['attributeChanged']);
+        assert_attribute_log_entry(logEntries.last(), {name: contentAttributeName, oldValue: validValue1, newValue: validValue2, namespace: null});
+    }, name + ' must enqueue an attributeChanged reaction when replacing an existing attribute');
+    
+    container.parentNode.removeChild(container);
+}
+
+function testReflectAttributeWithPreContentValuesArea(preJsAttributeName, preValidValue, jsAttributeName, validValue1, validValue2, name) {
+    let container = document.createElement('map');
+    document.body.appendChild(container);
+
+    test(function () {
+        let element = define_new_custom_element([preJsAttributeName]);
+        let instance = document.createElement(element.name);
+        container.appendChild(instance);
+        instance.setAttribute(preJsAttributeName, preValidValue);
+        //instance[preJsAttributeName] = preValidValue;
+        assert_array_equals(element.takeLog().types(), ['constructed', 'connected', 'attributeChanged']);
+        instance.setAttribute(jsAttributeName, validValue1);
+        assert_array_equals(element.takeLog().types(),[]);
+    }, name + ' must not enqueue an attributeChanged reaction when it is unobserved attribute');
+    
+    test(function () {
+        let element = define_new_custom_element([preJsAttributeName]);
+        let instance = document.createElement(element.name);
+        container.appendChild(instance);
+        instance.setAttribute(preJsAttributeName, preValidValue);
+        //instance[preJsAttributeName] = preValidValue;
+        assert_array_equals(element.takeLog().types(), ['constructed', 'connected', 'attributeChanged']);
+        instance.setAttribute(jsAttributeName, validValue1);
+        assert_array_equals(element.takeLog().types(),[]);
+        instance.setAttribute(jsAttributeName, validValue2);
+        //instance[jsAttributeName] = validValue2;
+        let logEntries = element.takeLog();
+        assert_array_equals(logEntries.types(), []);
+    }, name + ' must not enqueue an attributeChanged reaction when alter an existing unobserved attribute');
+
+    container.parentNode.removeChild(container);
+}

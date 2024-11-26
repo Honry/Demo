@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: CEReactions on Element interface</title>
+<meta name="author" title="zhang xiaoyux" href="mailto:xiaoyux.zhang@intel.com">
+<meta name="assert" content=" align of HTMLButtonElement interface must have CEReactions">
+<meta name="help" content="https://html.spec.whatwg.org/multipage/grouping-content.html#htmldivelement">
+<meta name="help" content="https://w3c.github.io/DOM-Parsing/">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="./custom-elements-helpers.js"></script>
+<script src="./reactions.js"></script>
+</head>
+<body>
+<script>
+
+testReflectAttributeWithContentValuesNew('align', 'align','center','right','align on HTMLDivElement');
+
+</script>
+</body>
+</html>

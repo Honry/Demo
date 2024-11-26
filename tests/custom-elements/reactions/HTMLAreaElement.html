@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: CEReactions on Element interface</title>
+<meta name="author" title="zhang xiaoyux" href="mailto:xiaoyux.zhang@intel.com">
+<meta name="assert" content=" alt, coords, shape, target, download, ping, rel, referrerPolicy of HTMLAreaElement interface must have CEReactions">
+<meta name="help" content="https://html.spec.whatwg.org/#the-area-element">
+<meta name="help" content="https://w3c.github.io/DOM-Parsing/">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="./custom-elements-helpers.js"></script>
+<script src="./reactions.js"></script>
+</head>
+<body>
+<script>
+
+testReflectAttributeWithContentValuesArea('shape', 'shape', 'circ', 'rect', 'shape on HTMLAreaElement');
+testReflectAttributeWithContentValuesArea('href', 'href', 'https://www.intel.cn', 'https://html.spec.whatwg.org', 'href on HTMLAreaElement');
+testReflectAttributeWithPreContentValuesArea('href', 'https://www.intel.cn', 'alt', 'sun', 'earth', 'alt on HTMLAreaElement');
+testReflectAttributeWithPreContentValuesArea('href', 'https://www.intel.cn', 'target', '_blank', '_top', 'target on HTMLAreaElement');
+testReflectAttributeWithPreContentValuesArea('href', 'https://www.intel.cn', 'download', 'a', 'b', 'download on HTMLAreaElement');
+testReflectAttributeWithPreContentValuesArea('href', 'https://www.intel.cn', 'ping', 'https://www.intel.cn/track', 'https://www.intel.cn/block', 'ping on HTMLAreaElement');
+testReflectAttributeWithPreContentValuesArea('href', 'https://www.intel.cn', 'rel', 'noreferrer', 'noopener', 'rel on HTMLAreaElement');
+testReflectAttributeWithPreContentValuesArea('href', 'https://www.intel.cn', 'referrerPolicy', 'never', 'origin', 'referrerPolicy on HTMLAreaElement');
+
+</script>
+</body>
+</html>
